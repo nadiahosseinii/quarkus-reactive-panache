@@ -3,24 +3,23 @@ package com.example.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "STUDENTS")
-@NamedQuery(name = "students.findAll", query = "SELECT s from Student s")
-public class Student {
+@Table(name = "COURSES")
+@NamedQuery(name = "courses.findAll", query = "SELECT c from Course c")
+public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     @Column(nullable = false, name = "NAME")
     private String name;
 
-    public Student() {
+    public Course() {
     }
 
-    public Student(String name) {
+    public Course(String name) {
         this.name = name;
     }
 
-    public Student(Long id, String name) {
+    public Course(Long id, String name) {
         this.id = id;
         this.name = name;
     }

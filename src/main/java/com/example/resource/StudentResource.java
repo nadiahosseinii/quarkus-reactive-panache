@@ -8,8 +8,6 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import org.hibernate.reactive.mutiny.Mutiny.SessionFactory;
 
-import java.util.List;
-
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 
@@ -18,23 +16,24 @@ public class StudentResource {
     @Inject
     SessionFactory sf;
 
-    public Uni<List<Student>> get() {
+    public Uni<Response> findAll() {
         return sf.withTransaction((s, t) -> s
                 .createNamedQuery("students.findAll", Student.class)
                 .getResultList()
+                .map(list ->
+                        Response.ok(list).build()
+                )
         );
     }
 
-
-    public Uni<Student> getSingle(Integer id) {
+    public Uni<Student> findById(Long id) {
         return sf.withTransaction((s, t) -> s.find(Student.class, id));
     }
 
-    public Uni<Response> create(Student student) {
+    public Uni<Response> persist(Student student) {
         if (student == null || student.getId() != null) {
             throw new WebApplicationException("Id was invalidly set on request.", 422);
         }
-
         return sf.withTransaction((s, t) -> s.persist(student))
                 .replaceWith(Response.ok(student).status(Response.Status.CREATED)::build);
     }
@@ -43,7 +42,6 @@ public class StudentResource {
         if (student == null || student.getName() == null) {
             throw new WebApplicationException("student name was not set on request.", 422);
         }
-
         return sf.withTransaction((s, t) -> s.find(Student.class, id)
                         .onItem().ifNull().failWith(new WebApplicationException("student missing from database.", NOT_FOUND))
                         // If entity exists then update it
