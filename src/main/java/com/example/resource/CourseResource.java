@@ -6,7 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
-import org.hibernate.reactive.mutiny.Mutiny;
+import org.hibernate.reactive.mutiny.Mutiny.SessionFactory;
 
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
@@ -14,15 +14,14 @@ import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 @ApplicationScoped
 public class CourseResource {
     @Inject
-    Mutiny.SessionFactory sf;
+    SessionFactory sf;
 
     public Uni<Response> findAll() {
         return sf.withTransaction((s, t) -> s
                 .createNamedQuery("courses.findAll", Course.class)
                 .getResultList()
                 .map(list ->
-                        Response.ok(list).build()
-                )
+                        Response.ok(list).build())
         );
     }
 

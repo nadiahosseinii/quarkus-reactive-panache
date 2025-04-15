@@ -1,15 +1,14 @@
 package com.example.model;
 
+import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "STUDENTS")
-@NamedQuery(name = "students.findAll", query = "SELECT s from Student s")
-public class Student {
+public class Student extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     @Column(nullable = false, name = "NAME")
     private String name;
 
