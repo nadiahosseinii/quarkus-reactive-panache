@@ -21,6 +21,12 @@ public class StudentRestApi {
                         Response.ok().entity(s).build());
     }
 
+    @GET
+    @Path("/{id}")
+    public Uni<Response> findById(@PathParam("id") Long id) {
+        return resource.findById(id).map(s -> Response.ok().entity(s).build());
+    }
+
     @POST
     public Uni<Response> create(Student student) {
         return resource.persist(student).map(s -> Response.ok(s).build());
